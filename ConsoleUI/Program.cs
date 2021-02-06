@@ -1,6 +1,8 @@
 ﻿using Business.Abstract;
 using Business.Concrete;
+using DataAccess.Abstract;
 using DataAccess.Concrete;
+using DataAccess.Concrete.EntityFramework;
 using Entities.Concrete;
 using System;
 
@@ -10,58 +12,65 @@ namespace ConsoleUI
     {
         static void Main(string[] args)
         {
-            ICarService carManager = new CarManager(new InMemoryCarDal());
+            ICarService carManager = new CarManager(new EfCarDal());
+            IBrandService brandManager = new BrandManager(new EfBrandDal());
 
-            WriteTitle("GetAll");
+            WriteTitle("brandManager.Add()");
 
-            WriteConsole(carManager);
+            brandManager.Add(new Brand { Name = "Toyota" });
 
-            WriteTitle("Add");
+            WriteTitle("carManager.Add()");
 
             carManager.Add(new Car
             {
-                Id = 6,
-                BrandId = 2,
-                ColorId = 3,
-                ModelYear = 2007,
-                DailyPrice = 800,
-                Description = "Kırmızı renk 2007 model BMW."
+                BrandId = 1,
+                ColorId = 4,
+                ModelYear = 2014,
+                DailyPrice = 1000,
+                Description = "2014 model siyah renk BMW."
             });
 
-            WriteConsole(carManager);
-
-            WriteTitle("Delete");
+            WriteTitle("Delete()");
 
             carManager.Delete(new Car
             {
-                Id = 2,
-                BrandId = 3,
-                ColorId = 1,
-                ModelYear = 2008,
-                DailyPrice = 500,
-                Description = "Beyaz renk 2008 model Peugeot."
+                Id = 2
             });
 
-            WriteConsole(carManager);
-
-            WriteTitle("GetById");
-
-            Console.WriteLine(carManager.GetById(3).Description);
-
-            WriteTitle("Update");
+            WriteTitle("Update()");
 
             carManager.Update(new Car
             {
-                Id = 3,
-                BrandId = 1,
+                Id = 1,
+                BrandId = 3,
                 ColorId = 4,
-                ModelYear = 2012,
-                DailyPrice = 900,
-                Description = "Lacivert renk 2012 model Mazda."
+                ModelYear = 2014,
+                DailyPrice = 700,
+                Description = "2009 model siyah renk Renault."
             });
 
-            WriteConsole(carManager);
-            
+            WriteTitle("GetAll()");
+
+            foreach (var car in carManager.GetAll())
+            {
+                Console.WriteLine(car.Description);
+            }
+
+            WriteTitle("GetCarsByBrandId()");
+
+            foreach (var car in carManager.GetCarsByBrandId(3))
+            {
+                Console.WriteLine(car.Description);
+            }
+
+            WriteTitle("GetCarsByColorId()");
+
+            foreach (var car in carManager.GetCarsByColorId(4))
+            {
+                Console.WriteLine(car.Description);
+            }
+
+
         }
 
         // Konsol için yardımcı metotlar
@@ -77,7 +86,7 @@ namespace ConsoleUI
         static void WriteTitle(string methodName)
         {
             Console.WriteLine("\n-----------------------------");
-            Console.WriteLine($"{methodName} fonksiyonu:");
+            Console.WriteLine($"{methodName}:");
             Console.WriteLine("-----------------------------");
         }
     }

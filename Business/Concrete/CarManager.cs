@@ -3,6 +3,8 @@ using DataAccess.Abstract;
 using Entities.Concrete;
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 
 namespace Business.Concrete
@@ -16,12 +18,21 @@ namespace Business.Concrete
         }
         public void Add(Car car)
         {
-            _carDal.Add(car);
+            if (car.DailyPrice > 0)
+            {
+                _carDal.Add(car);
+                Console.WriteLine("Araba başarı ile veritabanına eklendi.");
+            }
+            else
+            {
+                Console.WriteLine("Günlük ücret 0'ın üzerinde olmalıdır.");
+            }
         }
 
         public void Delete(Car car)
         {
             _carDal.Delete(car);
+            Console.WriteLine("Araba veritabanından silindi.");
         }
 
         public List<Car> GetAll()
@@ -29,14 +40,20 @@ namespace Business.Concrete
             return _carDal.GetAll();
         }
 
-        public Car GetById(int id)
+        public List<Car> GetCarsByBrandId(int brandId)
         {
-            return _carDal.GetById(id);
+            return _carDal.GetAll(c => c.BrandId == brandId);
+        }
+
+        public List<Car> GetCarsByColorId(int colorId)
+        {
+            return _carDal.GetAll(c => c.ColorId == colorId);
         }
 
         public void Update(Car car)
         {
             _carDal.Update(car);
+            Console.WriteLine("Veritabanı güncellendi.");
         }
     }
 }
