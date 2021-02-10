@@ -12,64 +12,13 @@ namespace ConsoleUI
     {
         static void Main(string[] args)
         {
-            ICarService carManager = new CarManager(new EfCarDal());
-            IBrandService brandManager = new BrandManager(new EfBrandDal());
 
-            WriteTitle("brandManager.Add()");
-
-            brandManager.Add(new Brand { Name = "Toyota" });
-
-            WriteTitle("carManager.Add()");
-
-            carManager.Add(new Car
+            CarManager carManager = new CarManager(new EfCarDal());
+            foreach (var car in carManager.GetCarDetails())
             {
-                BrandId = 1,
-                ColorId = 4,
-                ModelYear = 2014,
-                DailyPrice = 1000,
-                Description = "2014 model siyah renk BMW."
-            });
-
-            WriteTitle("Delete()");
-
-            carManager.Delete(new Car
-            {
-                Id = 2
-            });
-
-            WriteTitle("Update()");
-
-            carManager.Update(new Car
-            {
-                Id = 1,
-                BrandId = 3,
-                ColorId = 4,
-                ModelYear = 2014,
-                DailyPrice = 700,
-                Description = "2009 model siyah renk Renault."
-            });
-
-            WriteTitle("GetAll()");
-
-            foreach (var car in carManager.GetAll())
-            {
-                Console.WriteLine(car.Description);
+                Console.WriteLine($"Id: {car.Id}, Marka: {car.BrandName}, Color: {car.ColorName}, Yıl: {car.ModelYear}, Günlük Fiyat: {car.DailyPrice}");
             }
-
-            WriteTitle("GetCarsByBrandId()");
-
-            foreach (var car in carManager.GetCarsByBrandId(3))
-            {
-                Console.WriteLine(car.Description);
-            }
-
-            WriteTitle("GetCarsByColorId()");
-
-            foreach (var car in carManager.GetCarsByColorId(4))
-            {
-                Console.WriteLine(car.Description);
-            }
-
+            
 
         }
 
