@@ -14,23 +14,15 @@ namespace ConsoleUI
         {
 
             CarManager carManager = new CarManager(new EfCarDal());
-            foreach (var car in carManager.GetCarDetails())
+
+            foreach (var car in carManager.GetCarDetails().Data)
             {
                 Console.WriteLine($"Id: {car.Id}, Marka: {car.BrandName}, Color: {car.ColorName}, Yıl: {car.ModelYear}, Günlük Fiyat: {car.DailyPrice}");
             }
-            
 
         }
 
         // Konsol için yardımcı metotlar
-
-        static void WriteConsole(ICarService carManager)
-        {
-            foreach (var car in carManager.GetAll())
-            {
-                Console.WriteLine(car.Description);
-            }
-        }
 
         static void WriteTitle(string methodName)
         {

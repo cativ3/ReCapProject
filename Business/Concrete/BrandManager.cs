@@ -1,4 +1,6 @@
 ﻿using Business.Abstract;
+using Business.Constants;
+using Core.Utilities.Results;
 using DataAccess.Abstract;
 using DataAccess.Concrete.EntityFramework;
 using Entities.Concrete;
@@ -18,33 +20,33 @@ namespace Business.Concrete
             _brandDal = brandDal;
         }
 
-        public void Add(Brand entity)
+        public IResult Add(Brand entity)
         {
 
-            if (entity.Name.Length >= 2)
+            if (entity.Name.Length < 2)
             {
-                _brandDal.Add(entity);
-                Console.WriteLine("Marka başarı ile veritabanına eklendi.");
+                return new ErrorResult(Messages.InvalidName);
             }
-            else
-            {
-                Console.WriteLine("Marka adı 2 harfin üzerinde olmalıdır.");
-            }
+
+            _brandDal.Add(entity);
+            return new SuccessResult(Messages.Added);
         }
 
-        public void Delete(Brand entity)
+        public IResult Delete(Brand entity)
         {
             _brandDal.Delete(entity);
+            return new SuccessResult(Messages.Deleted);
         }
 
-        public List<Brand> GetAll()
+        public IDataResult<List<Brand>> GetAll()
         {
-            return _brandDal.GetAll();
+            return new SuccessDataResult<List<Brand>>(Messages.Listed, _brandDal.GetAll());
         }
 
-        public void Update(Brand entity)
+        public IResult Update(Brand entity)
         {
             _brandDal.Update(entity);
+            return new SuccessResult(Messages.Updated);
         }
     }
 }

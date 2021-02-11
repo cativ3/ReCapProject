@@ -1,4 +1,5 @@
-﻿using Entities.Abstract;
+﻿using Core.Utilities.Results;
+using Entities.Abstract;
 using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
@@ -8,9 +9,9 @@ namespace Business.Abstract
 {
     public interface IEntityService<T> where T: class, IEntity, new()
     {
-        List<T> GetAll();
-        void Delete(T entity);
-        void Add(T entity);
-        void Update(T entity);
+        IDataResult<List<T>> GetAll();
+        IResult Delete(T entity);
+        IResult Add(T entity);
+        IResult Update(T entity);
     }
 }
