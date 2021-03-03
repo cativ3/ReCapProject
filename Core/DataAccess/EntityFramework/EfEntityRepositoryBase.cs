@@ -32,6 +32,15 @@ namespace Core.DataAccess.EntityFramework
                 context.SaveChanges();
             }
         }
+        public void Update(TEntity entity)
+        {
+            using (TContext context = new TContext())
+            {
+                var updatedEntity = context.Entry(entity);
+                updatedEntity.State = EntityState.Modified;
+                context.SaveChanges();
+            }
+        }
 
         public TEntity Get(Expression<Func<TEntity, bool>> filter = null)
         {
@@ -48,16 +57,6 @@ namespace Core.DataAccess.EntityFramework
                 return filter == null
                     ? context.Set<TEntity>().ToList()
                     : context.Set<TEntity>().Where(filter).ToList();
-            }
-        }
-
-        public void Update(TEntity entity)
-        {
-            using (TContext context = new TContext())
-            {
-                var updatedEntity = context.Entry(entity);
-                updatedEntity.State = EntityState.Modified;
-                context.SaveChanges();
             }
         }
     }

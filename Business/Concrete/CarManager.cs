@@ -1,5 +1,8 @@
 ﻿using Business.Abstract;
 using Business.Constants;
+using Business.ValidationRules.FluentValidation;
+using Core.Aspects.Validation;
+using Core.CrossCuttingConcerns.Validation;
 using Core.Utilities.Results;
 using DataAccess.Abstract;
 using Entities.Concrete;
@@ -19,11 +22,18 @@ namespace Business.Concrete
         {
             _carDal = carDal;
         }
+
+        [ValidationAspect(typeof(CarValidator))]
         public IResult Add(Car car)
         {
-            if (car.DailyPrice < 1)
+            var result = CheckRules(
+                CheckIfModelYearExpired(car),
+                CheckIfBrandLimitExceeded(car)
+            );
+
+            if (!result.Success)
             {
-                return new ErrorResult(Messages.InvalidPrice);
+                return new ErrorResult(result.Message);
             }
 
             _carDal.Add(car);
@@ -60,6 +70,43 @@ namespace Business.Concrete
         {
             _carDal.Update(car);
             return new SuccessResult(Messages.Updated);
+        }
+
+        public IResult CheckIfBrandLimitExceeded(Car car)
+        {
+            var brands = _carDal.GetAll(c => c.BrandId == car.BrandId);
+
+            if (brands.Count >= 5)
+            {
+                return new ErrorResult(Messages.BrandLimitExceeded);
+            }
+
+            return new SuccessResult();
+        }
+
+        public IResult CheckIfModelYearExpired(Car car)
+        {
+            var carAge = DateTime.Now.Year - car.ModelYear;
+
+            if (carAge > 20)
+            {
+                return new ErrorResult(Messages.ModelYearExpired);
+            }
+
+            return new SuccessResult();
+        }
+
+        private IResult CheckRules(params IResult[] rules)
+        {
+            foreach (var rule in rules)
+            {
+                if (!rule.Success)
+                {
+                    return new ErrorResult(rule.Message);
+                }
+            }
+
+            return new SuccessResult();
         }
     }
 }
